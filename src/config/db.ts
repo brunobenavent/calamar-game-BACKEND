@@ -1,15 +1,19 @@
-import mongoose from 'mongoose'
-import colors from 'colors'
+import mongoose from "mongoose";
+import colors from "colors";
 
 export const connectDB = async () => {
     try {
-        const {connection} = await mongoose.connect(process.env.DATABASE_URL )
-        const url = `${connection.host}:${connection.port}`
-        console.log(colors.magenta.bold(`MongoDB conectado en: ${url}`))
-    } catch (error) {
-        console.log(error.message)
-        console.log(colors.red.bold('Error al conectar a MongoDb'))
-        process.exit(1)
-    }
+        if (!process.env.DATABASE_URL) {
+            throw new Error("⚠️ DATABASE_URL no está definida en el .env");
+        }
 
-}
+        const conn = await mongoose.connect(process.env.DATABASE_URL, {
+            dbName: "calamar_game", // Asegura que siempre se use la misma base de datos
+        });
+
+        console.log(colors.magenta.bold(`🔥MongoDB conectado en: ${conn.connection.host}`));
+    } catch (error) {
+        console.error(colors.red.bold("❌Error al conectar a MongoDB"), error);
+        process.exit(1);
+    }
+};
