@@ -24,17 +24,15 @@ const gameSchema = new Schema<IGame>(
     players: [{
         type: Schema.Types.ObjectId,
         ref: "User",
-        required: true
+        default: []
     }],
     status: {
       type: String,
-      required: true,
       enum: ["pendiente", "en progreso", "finalizado"],
       default: "pendiente",
     },
     prizePool: {
         type: Number,
-        required: true,
         default: 0
     },  // Premio del juego
   },
