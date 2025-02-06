@@ -1,35 +1,35 @@
-import { Schema, model, Document } from "mongoose";
-import { IUser } from "./User";  // Importamos el modelo de User
+import mongoose, { Schema, model, Document } from 'mongoose';
+import { IUser } from './User';  // Importamos el modelo de User
+import { IRound } from './Round';
 
-export interface IGame extends Document {
+export type GameType = Document &{
   gameName: string  // Nombre del juego
-  round: number   // Número de la ronda
+  isActive: boolean  // Indica si el juego está activo
+  gameRounds: IRound[]  // Rondas del juego
   players: IUser[]  // Jugadores inscritos en el juego (referencia a User)
   status: string    // Estado del juego (ej. 'iniciado', 'finalizado', 'pendiente')
   prizePool: number // Premio acumulado por los jugadores
 }
-
-const gameSchema = new Schema<IGame>(
+const GameSchema: Schema = new Schema(
   {
     gameName: {
         type: String,
-        required: true,
-        trim: true
+        trim: true,
+        required: true
     },
-    round: {
-        type: Number,
-        required: true,
-        default: 1
-    },
-    players: [{
+    gameRounds: [{
         type: Schema.Types.ObjectId,
-        ref: "User",
+        ref: 'Round',
         default: []
     }],
-    status: {
-      type: String,
-      enum: ["pendiente", "en progreso", "finalizado"],
-      default: "pendiente",
+    players: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        default: []
+    }],
+    isActive: {
+      type: Boolean,
+      default: true,
     },
     prizePool: {
         type: Number,
@@ -39,4 +39,5 @@ const gameSchema = new Schema<IGame>(
   { timestamps: true }  // Añadimos `timestamps` para crear automáticamente `createdAt` y `updatedAt`
 );
 
-export const Game = model<IGame>("Game", gameSchema);
+const Game = model<GameType>('Game', GameSchema)
+export default Game

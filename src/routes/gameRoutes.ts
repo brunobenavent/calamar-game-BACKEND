@@ -1,7 +1,7 @@
-import { GameController } from "../controllers/gameController";
 import { Router } from 'express'
-import { body } from 'express-validator'
+import { body, param } from 'express-validator'
 import { handleInputErrors } from '../middleware/validation'
+import { GameController } from '../controllers/gameController';
 
 
 const router = Router();
@@ -13,8 +13,10 @@ router.post( "/",
 );
 
 router.get("/", GameController.getAllGames); 
- 
-// Obtener todos los juegos
+router.get("/:id",
+  param('id').isMongoId().withMessage('El id del juego no es válido'),
+  handleInputErrors, 
+  GameController.getGameById)
+
 
 export default router;
-  handleInputErrors

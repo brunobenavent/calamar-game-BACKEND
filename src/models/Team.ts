@@ -2,24 +2,13 @@ import { Schema, model, Document } from "mongoose";
 
 export interface ITeam extends Document {
   name: string;         // Nombre del equipo (ej. "FC Barcelona")
-  shortName: string;    // Abreviatura (ej. "BAR")
-  country: string;      // País del equipo (ej. "España")
-  logo: string;         // URL del logo del equipo
+  logo: string;         // URL del logo del equipo 
+
 }
 
 const teamSchema = new Schema<ITeam>(
   {
     name: {
-      type: String,
-      required: true,
-      unique: true
-    },
-    shortName: {
-      type: String,
-      required: true,
-      unique: true
-    },
-    country: {
       type: String,
       required: true
     },
