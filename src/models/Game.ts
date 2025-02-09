@@ -1,14 +1,16 @@
-import mongoose, { Schema, model, Document } from 'mongoose';
-import { IUser } from './User';  // Importamos el modelo de User
-import { IRound } from './Round';
+import  { Schema, model, Document, PopulatedDoc } from 'mongoose'
 
-export type GameType = Document &{
-  gameName: string  // Nombre del juego
-  isActive: boolean  // Indica si el juego está activo
-  gameRounds: IRound[]  // Rondas del juego
-  players: IUser[]  // Jugadores inscritos en el juego (referencia a User)
-  status: string    // Estado del juego (ej. 'iniciado', 'finalizado', 'pendiente')
-  prizePool: number // Premio acumulado por los jugadores
+import { IPlayer } from './Player'
+import { IRound } from './Match'
+
+
+export interface IGame extends Document {
+  gameName: string
+  isActive: boolean
+  gameRounds: PopulatedDoc<IRound & Document>[]
+  players: PopulatedDoc<IPlayer & Document>[]
+  status: string
+  prizePool: number
 }
 const GameSchema: Schema = new Schema(
   {
@@ -24,7 +26,7 @@ const GameSchema: Schema = new Schema(
     }],
     players: [{
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'Player',
         default: []
     }],
     isActive: {
@@ -34,10 +36,10 @@ const GameSchema: Schema = new Schema(
     prizePool: {
         type: Number,
         default: 0
-    },  // Premio del juego
+    },
   },
-  { timestamps: true }  // Añadimos `timestamps` para crear automáticamente `createdAt` y `updatedAt`
-);
+  { timestamps: true }  
+)
 
-const Game = model<GameType>('Game', GameSchema)
+const Game = model<IGame>('Game', GameSchema)
 export default Game

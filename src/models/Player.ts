@@ -1,49 +1,45 @@
-import { Schema, model, Document } from "mongoose";
-import { IUser } from "./User";  // Importamos el modelo de User
-import { IGame } from "./Game";  // Importamos el modelo de Game
+import { Schema, model, Document, PopulatedDoc, Types } from 'mongoose'
+import { IPrediction } from './Prediction'
 
 export interface IPlayer extends Document {
-  user: IUser;      // Usuario que es jugador
-  game: IGame;      // Juego en el que participa
-  round: number;    // Ronda actual del jugador
-  prediction: string; // Pronóstico del jugador (ej. "Barcelona gana")
-  status: string;   // Estado del jugador (ej. "activo", "eliminado", etc.)
-  prize: number;    // Premio acumulado si el jugador gana
+  alias: string
+  user: Types.ObjectId
+  game: Types.ObjectId
+  predictions: PopulatedDoc<IPrediction & Document>[]
+  status: string
 }
 
 const playerSchema = new Schema<IPlayer>(
   {
+    alias: {
+      type: String,
+      required: true,
+      trim: true
+    },
     user: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true
     },
     game: {
       type: Schema.Types.ObjectId,
-      ref: "Game",
+      ref: 'Game',
       required: true
     },
-    round: {
-      type: Number,
-      required: true,
-      default: 1
-    },
-    prediction: {
-      type: String,
+    predictions: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Prediction',
       required: true
-    },
+    }],
     status: {
       type: String,
       required: true,
-      enum: ["activo", "eliminado", "ganador"],
-      default: "activo"
+      enum: ['activo', 'eliminado', 'ganador'],
+      default: 'activo'
     },
-    prize: {
-      type: Number,
-      default: 0
-    }
   },
-  { timestamps: true }  // Añadimos `timestamps` para crear automáticamente `createdAt` y `updatedAt`
-);
+  { timestamps: true }
+)
 
-export const Player = model<IPlayer>("Player", playerSchema);
+const Player = model<IPlayer>('Player', playerSchema)
+export default Player

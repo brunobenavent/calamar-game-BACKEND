@@ -1,9 +1,8 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model, Document } from 'mongoose';
 
 export interface ITeam extends Document {
-  name: string;         // Nombre del equipo (ej. "FC Barcelona")
-  logo: string;         // URL del logo del equipo 
-
+  name: string
+  logo: string
 }
 
 const teamSchema = new Schema<ITeam>(
@@ -17,7 +16,8 @@ const teamSchema = new Schema<ITeam>(
       required: true
     }
   },
-  { timestamps: true } // Crea automáticamente `createdAt` y `updatedAt`
-);
+  { timestamps: true }
+)
 
-export const Team = model<ITeam>("Team", teamSchema);
+const Team = model<ITeam>('Team', teamSchema)
+export default Team

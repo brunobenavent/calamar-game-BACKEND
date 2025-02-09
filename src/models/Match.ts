@@ -1,49 +1,70 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model, Document } from 'mongoose';
 
 export interface IMatch extends Document {
-  matchDay: number;    // Jornada a la que pertenece el partido
-  homeTeam: string;    // Nombre del equipo local
-  awayTeam: string;    // Nombre del equipo visitante
-  homeScore?: number;  // Goles del equipo local (opcional, antes de jugar puede no haber goles)
-  awayScore?: number;  // Goles del equipo visitante
-  status: string;      // Estado del partido ("sin comenzar", "en juego", "finalizado", etc.)
-  date: Date;          // Fecha y hora del partido
+  fixture: {
+    date: string;
+    periods: {
+      first: number;
+      second: number;
+    };
+    status: {
+      long: string;
+    };
+  };
+  league: {
+    season: number;
+    round: string;
+  };
+  teams: {
+    home: {
+      name: string;
+      logo: string;
+      winner: boolean;
+    };
+    away: {
+      name: string;
+      logo: string;
+      winner: boolean;
+    };
+  };
+  goals: {
+    home: number;
+    away: number;
+  };
 }
 
-const matchSchema = new Schema<IMatch>(
-  {
-    matchDay: {
-      type: Number,
-      required: true
-    },
-    homeTeam: {
-      type: String,
-      required: true
-    },
-    awayTeam: {
-      type: String,
-      required: true
-    },
-    homeScore: {
-      type: Number,
-      default: null
-    },
-    awayScore: {
-      type: Number,
-      default: null
+const matchSchema: Schema = new Schema({
+  fixture: {
+    date: { type: String, required: true },
+    periods: {
+      first: { type: Number, required: true },
+      second: { type: Number, required: true },
     },
     status: {
-      type: String,
-      required: true,
-      enum: ["sin comenzar", "en juego", "finalizado", "suspendido", "aplazado"],
-      default: "sin comenzar"
+      long: { type: String, required: true },
     },
-    date: {
-      type: Date,
-      required: true
-    }
   },
-  { timestamps: true } // Crea automáticamente `createdAt` y `updatedAt`
-);
-
-export const Match = model<IMatch>("Match", matchSchema);
+  league: {
+    season: { type: Number, required: true },
+    round: { type: String, required: true },
+  },
+  teams: {
+    home: {
+      name: { type: String, required: true },
+      logo: { type: String, required: true },
+      winner: { type: Boolean, required: true },
+    },
+    away: {
+      name: { type: String, required: true },
+      logo: { type: String, required: true },
+      winner: { type: Boolean, required: true },
+    },
+  },
+  goals: {
+    home: { type: Number, required: true },
+    away: { type: Number, required: true },
+  },
+});
+const Match = model<IMatch>('Match', matchSchema);
+export type IRound = IMatch[];
+export default Match;

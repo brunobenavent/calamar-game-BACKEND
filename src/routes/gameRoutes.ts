@@ -1,7 +1,9 @@
 import { Router } from 'express'
 import { body, param } from 'express-validator'
 import { handleInputErrors } from '../middleware/validation'
-import { GameController } from '../controllers/gameController';
+import { GameController } from '../controllers/GameController';
+import { gameExists } from '../middleware/game';
+
 
 
 const router = Router();
@@ -9,6 +11,7 @@ const router = Router();
 router.post( "/",
   body('gameName').isLength({ min: 3 }).withMessage('El nombre del juego debe tener al menos 3 caracteres'),
   handleInputErrors,
+  gameExists,
   GameController.createGame
 );
 

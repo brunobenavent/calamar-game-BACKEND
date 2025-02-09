@@ -1,10 +1,10 @@
-import { Schema, model, Document } from "mongoose";
-import { IGame } from "./Game";
-import { IMatch } from "./Match";
+import { Schema, model, Document, PopulatedDoc } from 'mongoose';
+import { IMatch } from './Match';
+
 
 export interface IRound extends Document {
-  matches: IMatch[];       // Partidos de la jornada
-  roundNumber: string; // Número de la jornada de liga
+  matches: PopulatedDoc<IMatch & Document>[]
+  roundNumber: string
 }
 
 const roundSchema = new Schema<IRound>(
@@ -16,12 +16,13 @@ const roundSchema = new Schema<IRound>(
     matches: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Match",
+        ref: 'Match',
         required: true  
       }
     ],
   },
   { timestamps: true }
-);
+)
 
-export const Round = model<IRound>("Round", roundSchema);
+const Round = model<IRound>('Round', roundSchema)
+export default Round
