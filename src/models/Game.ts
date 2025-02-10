@@ -1,7 +1,7 @@
 import  { Schema, model, Document, PopulatedDoc } from 'mongoose'
 
 import { IPlayer } from './Player'
-import { IRound } from './Match'
+import { IRound } from './Round'
 
 
 export interface IGame extends Document {

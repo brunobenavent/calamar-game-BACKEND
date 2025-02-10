@@ -3,6 +3,7 @@ import { getCurrentSeason } from '../utils/dates'
 import api from '../lib/axios'
 import { footballMatchesResponseSchema, footballRoundsResponseSchema } from '../schema/football-schema'
 import Game from '../models/Game'
+import Round from '../models/Round'
 
 export class GameController {
   // Método para crear un nuevo juego
@@ -30,16 +31,17 @@ export class GameController {
     const url: string = `/fixtures?league=140&season=${currentSeason}&round=${currentRound}`
     const {data: {response}} = await api.get(url)
 
-    const matchResponse  =  footballMatchesResponseSchema.safeParse(response)
-    if (!matchResponse.success) {
+    const matchesResponse  =  footballMatchesResponseSchema.safeParse(response)
+    if (!matchesResponse.success) {
       return res.status(500).json({ message: 'Error al obtener los partidos de la jornada' })
     }
+    const newRound = new Round({matches:matchesResponse.data})
     const newGame = new Game({gameName})
-
+    newGame.gameRounds.push(newRound)
 
     try {
-      await newGame.save();
-      res.status(201).send(matchResponse.data)
+      await Promise.allSettled([newGame.save(), newRound.save()])
+      res.status(201).json('Juego creado correctamente')
       
     } catch (error) {
       res.status(500).json({ message: 'Error al crear el juego o al obtener las ligas', error })
@@ -49,23 +51,19 @@ export class GameController {
 
    // Método para obtener todos los juegos
    static getAllGames = async (req: Request, res: Response) => {
+    const games = Game.find()
     try {
-      const games = await Game.find()
       res.status(200).json(games)
     } catch (error) {
       console.log(error)
     }
   }
    static getGameById = async (req: Request, res: Response) => {
+    const game = Game.findById(req.params.id)
     try {
-      const game = await Game.findById(req.params.id)
       res.status(200).json(game)
     } catch (error) {
       console.log(error)
     }
   }
-
-
-
-
 }

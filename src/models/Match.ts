@@ -4,8 +4,8 @@ export interface IMatch extends Document {
   fixture: {
     date: string;
     periods: {
-      first: number;
-      second: number;
+      first: number | null;
+      second: number | null;
     };
     status: {
       long: string;
@@ -19,52 +19,55 @@ export interface IMatch extends Document {
     home: {
       name: string;
       logo: string;
-      winner: boolean;
+      winner: boolean | null;
     };
     away: {
       name: string;
       logo: string;
-      winner: boolean;
+      winner: boolean | null;
     };
   };
   goals: {
-    home: number;
-    away: number;
+    home: number | null;
+    away: number | null;
   };
 }
 
-const matchSchema: Schema = new Schema({
+export const matchSchema: Schema = new Schema({
   fixture: {
     date: { type: String, required: true },
     periods: {
-      first: { type: Number, required: true },
-      second: { type: Number, required: true },
+      first: { type: Number, default: null },
+      second: { type: Number, default: null},
     },
     status: {
-      long: { type: String, required: true },
+      long: {
+        type: String
+        
+      
+      },
     },
   },
   league: {
-    season: { type: Number, required: true },
-    round: { type: String, required: true },
+    season: { type: Number},
+    round: { type: String },
   },
   teams: {
     home: {
-      name: { type: String, required: true },
-      logo: { type: String, required: true },
-      winner: { type: Boolean, required: true },
+      name: { type: String },
+      logo: { type: String },
+      winner: { type: Boolean, default: null },
     },
     away: {
-      name: { type: String, required: true },
-      logo: { type: String, required: true },
-      winner: { type: Boolean, required: true },
+      name: { type: String },
+      logo: { type: String},
+      winner: { type: Boolean, default: null },
     },
   },
   goals: {
-    home: { type: Number, required: true },
-    away: { type: Number, required: true },
+    home: { type: Number, default: null },
+    away: { type: Number, default: null },
   },
 });
 const Match = model<IMatch>('Match', matchSchema);
-export type IRound = IMatch[];
 export default Match;
